@@ -9,6 +9,11 @@
 #include <limits.h>
 
 /* enumerated pass-to targets */
+/*
+ * Honestly can't remember how this was supposed to be used, likely meant to 
+ * act as a replacement for a bitmap flag variable. Will likely switch back to 
+ * a bitmap to define what needs to be displayed when listing dirents
+ */
 enum passtarget { XLS, ALPHASORT, SIZESORT, DOTSTRIP, STATDATA, FSAPPEND };
 
 /*
@@ -36,6 +41,8 @@ static int
 buildlist(struct dirent *entry, enum passtarget passto) {
 	char **contents;
 	static int i = 0;
+
+	contents = NULL;
 
 	if (passto == XLS) { 
 		xls(contents);
@@ -72,7 +79,7 @@ targets(char **arglist, uint16_t flags) {
 	if (*arglist == NULL) { 
 		if ((dirp = opendir(".")) != NULL) {	
 			while ((entry = readdir(dirp)) != NULL) { 
-				buildlist(entry);
+				buildlist(entry, DOTSTRIP);
 			}
 		}
 	}
@@ -84,7 +91,7 @@ targets(char **arglist, uint16_t flags) {
 		 */
 		if (((dirp = opendir(*arglist)) != NULL) && (chdir(*arglist) == 0)) { 
 			while ((entry = readdir(dirp)) != NULL) {
-				buildlist(entry);
+				buildlist(entry, DOTSTRIP);
 			}
 		} else {
 			err(errno,"%s",*arglist);
