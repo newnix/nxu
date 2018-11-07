@@ -6,6 +6,8 @@
 #define __NXLS_H__
 
 /* ensure we have limits */
+#include <sys/types.h>
+#include <dirent.h>
 #include <limits.h>
 
 /* enumerated pass-to targets */
@@ -44,16 +46,22 @@ buildlist(struct dirent *entry, enum passtarget passto) {
 
 	contents = NULL;
 
+	/* temp short circuit */
+	fprintf(stdout, "%s\n", entry->d_name);
+	return(0);
+
 	if (passto == XLS) { 
 		xls(contents);
 	}
 
 	if ((contents = calloc(PATH_MAX,PATH_MAX)) == NULL) { 
 		return(-1);
+	} else {
+		fprintf(stderr, "Created buffer of size %lu at %p\n", sizeof(contents), contents);
 	}
 
 	/* copy the dirent name to the next slot */
-	if (strlcpy(contents[i],entry->d_name,PATH_MAX) != 0) {
+	if (strlcpy(*contents+i,entry->d_name,PATH_MAX) != 0) {
 		i++;
 		return(0);
 	} else {
@@ -62,6 +70,7 @@ buildlist(struct dirent *entry, enum passtarget passto) {
 	xls(contents);
 }
 
+/* entry point from main() */
 static int
 targets(char **arglist, uint16_t flags) {
 	/* allocate space for a stat(2) struct */
@@ -72,7 +81,7 @@ targets(char **arglist, uint16_t flags) {
 	dirp = NULL;
 	entry = NULL;
 
-	if ((ent = calloc(1,sizeof(*ent))) == NULL) { 
+	if ((ent = calloc((size_t)1,sizeof(struct stat*))) == NULL) { 
 			return(1);
 	}
 	/* if no arguments were given, list PWD */
@@ -128,7 +137,7 @@ usage(void) {
 static int
 xls(char **contents) { 
 	/* this will now only take an object/struct to display */
-	for (; *contents != NULL; *contents++) {
+	for (; *contents != NULL; contents++) {
 		fprintf(stdout,"%s\n",*contents);
 	}
 	return(0);
