@@ -2,7 +2,6 @@
  * This file simply contains function definitions for those found in nxls.c
  */
 
-#ifndef __NXLS_H__
 #define __NXLS_H__
 
 /* ensure we have limits */
@@ -50,24 +49,17 @@ buildlist(struct dirent *entry, enum passtarget passto) {
 	fprintf(stdout, "%s\n", entry->d_name);
 	return(0);
 
-	if (passto == XLS) { 
-		xls(contents);
-	}
-
-	if ((contents = calloc(PATH_MAX,PATH_MAX)) == NULL) { 
-		return(-1);
-	} else {
-		fprintf(stderr, "Created buffer of size %lu at %p\n", sizeof(contents), contents);
-	}
-
-	/* copy the dirent name to the next slot */
+	/* 
+	 * copy the dirent name to the next slot 
+	 * will need to refactor to better allocate and assign
+	 * the buffer of dirents to list in another function
+	 */
 	if (strlcpy(*contents+i,entry->d_name,PATH_MAX) != 0) {
 		i++;
 		return(0);
 	} else {
 		return(-1);
 	}
-	xls(contents);
 }
 
 /* entry point from main() */
@@ -142,5 +134,3 @@ xls(char **contents) {
 	}
 	return(0);
 }
-
-#endif

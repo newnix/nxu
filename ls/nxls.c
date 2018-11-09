@@ -51,7 +51,9 @@
 #endif
 
 /* local incs */
+#ifndef __NXLS_H__
 #include "nxls.h"
+#endif
 
 extern char **environ;
 extern char *__progname;
