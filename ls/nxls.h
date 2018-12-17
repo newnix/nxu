@@ -9,11 +9,11 @@
 #include <dirent.h>
 #include <limits.h>
 
-/* enumerated pass-to targets */
-/*
- * Honestly can't remember how this was supposed to be used, likely meant to 
- * act as a replacement for a bitmap flag variable. Will likely switch back to 
- * a bitmap to define what needs to be displayed when listing dirents
+/* 
+ * enumerated pass-to targets 
+ * These could almost certainly be either converted to or matched with 
+ * a callback function that can transform the data prior to getting listed
+ * for the user on stdout
  */
 enum passtarget { XLS, ALPHASORT, SIZESORT, DOTSTRIP, STATDATA, FSAPPEND };
 
@@ -29,8 +29,8 @@ static int xls(char **contents);
  * define directory symbols 
  */
 #define DIRECTORY '/'
-#define SYMLINK '@'
-#define HARDLINK "->"
+#define SYMLINK "@->" /* this could possibly get the link added by using readlink(2) */
+#define HARDLINK "->" /* as could this */
 #define EXECUTABLE '*'
 
 /* 
@@ -38,6 +38,7 @@ static int xls(char **contents);
  * each new directory should trigger this array being reset
  * pass the array to xls() if pass == 1
  */
+/* This may benefit from being changed to accept a function pointer */
 static int
 buildlist(struct dirent *entry, enum passtarget passto) {
 	char **contents;
@@ -100,8 +101,10 @@ targets(char **arglist, uint16_t flags) {
 	}
 	if (dirp != NULL) {
 		closedir(dirp);
+		dirp = NULL;
 	}
 	free(ent);
+	ent = NULL;
   return(0);
 }
 
