@@ -88,7 +88,7 @@ main(int argc, char **argv) {
 		exit(1);
 #endif
 	} else { 
-		for (; *environ; environ++) { 
+		for (; *environ != NULL; environ++) { 
 			fprintf(stdout,"%s%c",*environ,envsep);
 		}
 	}
