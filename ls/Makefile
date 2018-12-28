@@ -56,6 +56,7 @@ debug: build-dbg
 	$(PREFIX)$(DESTDIR)$(TARGET) $(HELP)
 
 install: build
+	@rm -f ${PREFIX}${DESTDIR}${TARGET}
 	@strip -s ${TARGET}
 	@mkdir -p ${PREFIX}${DESTDIR}
 	@chown ${MUSER}:${GROUP} ${TARGET}
