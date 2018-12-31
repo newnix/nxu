@@ -118,3 +118,21 @@ main(int argc, char **argv) {
 	targets(argv, flags);
   return(0);
 }
+
+void
+__attribute__((noreturn)) usage(void) {
+	fprintf(stdout, "%s: List directory contents\n"
+			"\t-a Include dotfiles\n"
+			"\t-f Print absolute paths\n"
+			"\t-h This message\n"
+			"\t-l \"Long\" output\n"
+			"\t-r Rucurse into child directories\n"
+			"\t-s Sort by size\n"
+			"\t-F Append file type symbols\n"
+			"\t-H Human friendly sizes\n"
+			"\t-S Dump stat(2) struct info\n"
+			"\t-0 NULL terminate each listing\n"
+			"\t-1 One entry per line\n",
+			__progname);
+	exit(0);
+}
