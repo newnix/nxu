@@ -12,18 +12,25 @@
 
 #include <sys/syslimits.h>
 
+/* Item struct declaration */
+/* 
+ * A dirent * has the following important members:
+ * d_namelen - length of the entry's name
+ * d_name - name of the entry
+ * d_type - filetype
+ */
 typedef struct _Item {
 	struct dirent *entry;
 	struct stat *estat;
-} item __packed;
+} item;
 
+/* List struct declaration */
 typedef struct _List {
-	item **entries; /* dynamic array of item structs */
-	struct _List *parent; /* pointer to the parent List item */
-	struct _List *child; /* pointer to the next List (only useful with the -r flag) */
-	uint16_t items; /* holds the count of items in the entry array */
-	unsigned int (*addEntry)(item *entry); /* I guess this will provide similar functionality as member functions in OOP, may need to be broken out */
-} List __packed;
+	struct _List *parent;
+	struct _List *children;
+	struct _Item *entries;
+	unsigned long childcount;
+} list;
 
 /* 
  * The List tree should turn out something like this: 
@@ -38,14 +45,15 @@ extern char *__progname;
 
 /* Function declarations */
 int targets(char **arglist, unsigned int flags);
-int buildlist(struct dirent *entry, int (*callback)(List *list));
-int xls(List *list);
-int _nxalphasort(List *list);
-int sizesort(List *list);
-int dotstrip(List *list);
-int statdata(List *list);
-int fsappend(List *list);
+int buildlist(struct dirent *entry, int (*callback)(list *tlist));
+int xls(list *tlist);
+int _nxalphasort(list *tlist);
+int sizesort(list *tlist);
+int dotstrip(list *tlist); 
+int statdata(list *tlist);
+int fsappend(list *tlist);
+int listdump(list *tlist);
 /* this may need to be revisited, but the idea is to generate an in-memory tree of the information we're going to display */
-int listgen(List *list);
+int listgen(list *tlist);
 /* usage declaration */
 void __attribute__((noreturn)) usage(void);
