@@ -82,7 +82,7 @@ main(int argc, char **argv) {
 	}
 	if (*argv) {
 		execvp(*argv,argv);
-		exit(1); /* signify that an error has occurred if no reporting is enabled */
+		return(1); /* signify that an error has occurred if no reporting is enabled */
 #ifdef PRNTERR
 		fprintf(stderr,"%s: Cannot exec %s!\n",__progname,*argv);
 		exit(1);
@@ -92,7 +92,7 @@ main(int argc, char **argv) {
 			fprintf(stdout,"%s%c",*environ,envsep);
 		}
 	}
-	exit(0);
+	return(0);
 }
 
 static void
