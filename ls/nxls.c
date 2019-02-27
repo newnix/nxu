@@ -54,10 +54,6 @@
 #ifndef __NXLS_H__
 #include "nxls.h"
 #endif
-/* this could probably be broken out into its own object file for linking later */
-#ifndef NXLS_TARGETS_
-#include "targets.c"
-#endif
 
 extern char **environ;
 

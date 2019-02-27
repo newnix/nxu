@@ -12,48 +12,30 @@
 
 #include <sys/syslimits.h>
 
-/* Item struct declaration */
 /* 
- * A dirent * has the following important members:
- * d_namelen - length of the entry's name
- * d_name - name of the entry
- * d_type - filetype
+ * This is a composite struct to allow us to operate on the info found
+ * both in the stat struct and the dirent struct, these will only be filled
+ * if the user demands it via the related flags
  */
-typedef struct _Item {
-	struct dirent *entry;
-	struct stat *estat;
+typedef struct _List_Item {
+	struct stat *statptr;
+	struct dirent *dptr;
 } item;
 
-/* List struct declaration */
+/* 
+ * This struct will be used to form a tree of entries in the specified directories,
+ * which will allow additional transformations as desired by the user, such as allowing
+ * an ascii tree to be printed, with or without additional data if so requested and 
+ * such functionality is ever added
+ */
 typedef struct _List {
-	struct _List *parent;
-	struct _List *children;
-	struct _Item *entries;
-	unsigned long childcount;
+	struct _List *parent; /* NULL if top of the tree, will not hold ".." */
+	struct _List *childdir; /* Only populated when recursion is desired, allows populating subdirectories in the same structure */
+	struct _List_Item *items; /* array of items in the current directory */
+	uint64_t childcount; /* unlikely to actually need such a large amount of space, used to possibly make certain operations easier */
 } list;
 
-/* 
- * The List tree should turn out something like this: 
- *
- * List->entries->entry->d_name; - item name
- * List->parent; - the parent directory of the given entry
- * List->child; - child directories of the List structure
- * List->items; - count of directory entries in the entry array
- * List->addEntry(item *entry); - Provided this works as intended, it's a function to update the struct with the new entry
- */
-extern char *__progname;
-
-/* Function declarations */
-int targets(char **arglist, unsigned int flags);
-int buildlist(struct dirent *entry, int (*callback)(list *tlist));
-int xls(list *tlist);
-int _nxalphasort(list *tlist);
-int sizesort(list *tlist);
-int dotstrip(list *tlist); 
-int statdata(list *tlist);
-int fsappend(list *tlist);
-int listdump(list *tlist);
-/* this may need to be revisited, but the idea is to generate an in-memory tree of the information we're going to display */
-int listgen(list *tlist);
+/* necessary functions */
+int modlist(int (*modfunc), list *listptr);
 /* usage declaration */
 void __attribute__((noreturn)) usage(void);
